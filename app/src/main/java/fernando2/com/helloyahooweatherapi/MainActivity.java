@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button button_getJson;
-    private TextView textView_putJson;
+    private TextView textView_showTemp;
+    private TextView textView_showLocation;
     private ProgressDialog dialog;
 
     @Override
@@ -21,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         button_getJson = (Button) findViewById(R.id.button_getJson);
-        textView_putJson = (TextView) findViewById(R.id.textView_putJson);
+        textView_showTemp = (TextView) findViewById(R.id.textView_showTemp);
+        textView_showLocation = (TextView) findViewById(R.id.textView_showLocation);
 
         button_getJson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,14 +41,32 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                textView_putJson.setText("La temperatura en Veracruz es: ");
             }
         });
 
     }
 
-    public void setTemp(String temp){
+    public void showData(int temp, String location){
+
+        temp = fahrenheitToCelsius(temp);
+
         dialog.dismiss();
-        textView_putJson.setText("La temperatura en Veracruz es: " + temp + "º F");
+        textView_showTemp.setText(temp + " ºC");
+        textView_showLocation.setText(location);
+
+    }
+
+    public void showErrorMsg(){
+        dialog.dismiss();
+
+        textView_showTemp.setText("N/A");
+        textView_showLocation.setText("Location N/A");
+
+        Toast.makeText(MainActivity.this, "Ocurrió un error al conectarse al servidor. Verifica tu conexión a Internet.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    public int fahrenheitToCelsius(int f){
+        return (int)((f-32) / 1.8);
     }
 }

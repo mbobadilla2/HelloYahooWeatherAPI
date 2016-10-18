@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HelloYahooWeatherAPI</string>
+    <string name="location">Veracruz, VE</string>
 </resources>

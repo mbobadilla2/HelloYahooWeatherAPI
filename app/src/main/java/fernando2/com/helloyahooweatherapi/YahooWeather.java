@@ -19,9 +19,11 @@ public class YahooWeather{
         private URL url;
         private MainActivity main;
         private String temp;
+        private String location;
 
         public YahooWeather(MainActivity main) {
             this.main = main;
+            location = main.getString(R.string.location);
         }
 
         public void getTemp() throws JSONException {
@@ -34,7 +36,7 @@ public class YahooWeather{
 
                     try {
 
-                        String yqlQuery = "select item.condition.temp from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"Veracruz, VE\")";
+                        String yqlQuery = "select item.condition.temp from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+ location + "\")";
                         String endpoint = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(yqlQuery));
 
                         url = new URL(endpoint);
@@ -94,12 +96,18 @@ public class YahooWeather{
                 }
 
                 @Override
-                protected void onPostExecute(String strings) {
-                    super.onPostExecute(strings);
+                protected void onPostExecute(String temp) {
+                    super.onPostExecute(temp);
                     //dynamictext.setText(strings);
                     //dialog.dismiss();
-                    System.out.println("************ POST La temperatura en Veracruz es: " + strings);
-                    main.setTemp(strings);
+                    //System.out.println("************ POST La temperatura en Veracruz es: " + temp);
+
+                    if(temp != null) {
+                        main.showData(Integer.parseInt(temp), location);
+
+                    }else{
+                        main.showErrorMsg();
+                    }
                 }
             }.execute();
 
