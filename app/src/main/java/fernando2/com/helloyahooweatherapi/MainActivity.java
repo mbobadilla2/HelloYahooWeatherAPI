@@ -1,10 +1,13 @@
 package fernando2.com.helloyahooweatherapi;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,9 +15,10 @@ import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button button_getJson;
-    private TextView textView_showTemp;
-    private TextView textView_showLocation;
+    private TextView textView_temp;
+    private TextView textView_location;
+    private TextView textView_text;
+    private ImageView imageView_conditions;
     private ProgressDialog dialog;
 
     @Override
@@ -22,47 +26,59 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button_getJson = (Button) findViewById(R.id.button_getJson);
-        textView_showTemp = (TextView) findViewById(R.id.textView_showTemp);
-        textView_showLocation = (TextView) findViewById(R.id.textView_showLocation);
-
-        button_getJson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog = new ProgressDialog(MainActivity.this);
-                dialog.setMessage("Cargando...");
-                dialog.show();
-
-                YahooWeather yahooWeather = new YahooWeather(MainActivity.this);
-
-                try {
-                    yahooWeather.getTemp();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+        textView_temp = (TextView) findViewById(R.id.textView_temp);
+        textView_location = (TextView) findViewById(R.id.textView_location);
+        textView_text = (TextView) findViewById(R.id.textView_text);
+        imageView_conditions = (ImageView) findViewById(R.id.imageView_conditions);
 
     }
 
-    public void showData(int temp, String location){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_layout, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setMessage("Loading...");
+        dialog.show();
+
+        YahooWeather yahooWeather = new YahooWeather(MainActivity.this);
+
+        try {
+            yahooWeather.getWeather();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void displayData(Bitmap conditions, int temp, String text, String location){
 
         temp = fahrenheitToCelsius(temp);
 
         dialog.dismiss();
-        textView_showTemp.setText(temp + " ºC");
-        textView_showLocation.setText(location);
+
+        imageView_conditions.setImageBitmap(conditions);
+        textView_temp.setText(temp + " ºC");
+        textView_text.setText(text);
+        textView_location.setText(location);
 
     }
 
-    public void showErrorMsg(){
+    public void displayErrorMsg(){
         dialog.dismiss();
 
-        textView_showTemp.setText("N/A");
-        textView_showLocation.setText("Location N/A");
+        imageView_conditions.setImageResource(R.drawable.ic_insert_photo_black_200dp);
+        textView_temp.setText("Temp N/A");
+        textView_text.setText("Conditions N/A");
+        textView_location.setText("Location N/A");
 
-        Toast.makeText(MainActivity.this, "Ocurrió un error al conectarse al servidor. Verifica tu conexión a Internet.",
+        Toast.makeText(MainActivity.this, "Unable to connect to server. Check your internet connection.",
                 Toast.LENGTH_LONG).show();
     }
 

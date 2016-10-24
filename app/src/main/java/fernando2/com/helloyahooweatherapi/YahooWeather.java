@@ -1,7 +1,11 @@
 package fernando2.com.helloyahooweatherapi;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -19,14 +23,16 @@ public class YahooWeather{
         private URL url;
         private MainActivity main;
         private String temp;
+        private String text;
         private String location;
+        private Bitmap conditions;
 
         public YahooWeather(MainActivity main) {
             this.main = main;
             location = main.getString(R.string.location);
         }
 
-        public void getTemp() throws JSONException {
+        public void getWeather() throws JSONException {
 
             new AsyncTask<String, Void, String>(){
 
@@ -36,14 +42,14 @@ public class YahooWeather{
 
                     try {
 
-                        String yqlQuery = "select item.condition.temp from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+ location + "\")";
+                        String yqlQuery = "select item.condition.temp, item.condition.text, item.description" +
+                                " from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+ location + "\")";
                         String endpoint = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(yqlQuery));
 
                         url = new URL(endpoint);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
-                    //dynamictext = (TextView) findViewById(R.id.dynamictext);
                 }
 
                 @Override
@@ -73,7 +79,29 @@ public class YahooWeather{
                         temp = json.optJSONObject("query").optJSONObject("results")
                                 .optJSONObject("channel").optJSONObject("item").optJSONObject("condition").getString("temp");
 
-                        System.out.println("************ BACKGROUND La temperatura en Veracruz es: " + temp);
+
+                        text = json.optJSONObject("query").optJSONObject("results")
+                                .optJSONObject("channel").optJSONObject("item").optJSONObject("condition").getString("text");
+
+
+                        String urlConditions =  json.optJSONObject("query").optJSONObject("results")
+                                .optJSONObject("channel").optJSONObject("item").getString("description");
+
+                        String[] temp = urlConditions.split("http");
+                        temp = temp[1].split("gif");
+
+                        urlConditions = "http" + temp[0] + "gif";
+
+                        Log.e("**********IMAGEN: ", urlConditions);
+
+                        try {
+                            InputStream in = new java.net.URL(urlConditions).openStream();
+                            conditions = BitmapFactory.decodeStream(in);
+                        } catch (Exception e) {
+                            Log.e("*** Error", e.getMessage());
+                            e.printStackTrace();
+                        }
+
 
                     }catch(Exception e){
                         e.printStackTrace();
@@ -92,21 +120,23 @@ public class YahooWeather{
                         }
                     }
 
-                    return temp;
+                    if(temp != null && text != null && conditions != null) {
+                        return "";
+                    }else{
+                        return null;
+                    }
                 }
 
                 @Override
-                protected void onPostExecute(String temp) {
-                    super.onPostExecute(temp);
-                    //dynamictext.setText(strings);
-                    //dialog.dismiss();
-                    //System.out.println("************ POST La temperatura en Veracruz es: " + temp);
+                protected void onPostExecute(String data) {
+                    super.onPostExecute(data);
 
-                    if(temp != null) {
-                        main.showData(Integer.parseInt(temp), location);
+
+                    if(data != null) {
+                        main.displayData(conditions, Integer.parseInt(temp), text, location);
 
                     }else{
-                        main.showErrorMsg();
+                        main.displayErrorMsg();
                     }
                 }
             }.execute();

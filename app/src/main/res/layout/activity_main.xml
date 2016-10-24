@@ -10,36 +10,49 @@
     tools:context="fernando2.com.helloyahooweatherapi.MainActivity">
 
 
-    <Button
-        android:id="@+id/button_getJson"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+    <ImageView
+        android:id="@+id/imageView_conditions"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_centerHorizontal="true"
-        android:text="Get JSON" />
+        android:layout_marginTop="15dp"
+        android:src="@drawable/ic_insert_photo_black_200dp" />
 
     <TextView
-        android:id="@+id/textView_showTemp"
+        android:id="@+id/textView_temp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_getJson"
-        android:layout_marginTop="35dp"
+        android:layout_below="@+id/imageView_conditions"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="14dp"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="N/A"
-        android:textSize="36dp"
-        android:textStyle="bold" />
+        android:text="Temp N/A"
+        android:textSize="28dp" />
 
 
     <TextView
-        android:id="@+id/textView_showLocation"
+        android:id="@+id/textView_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView_temp"
+        android:layout_marginTop="14dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="Condition N/A"
+        android:textSize="26dp" />
+
+
+    <TextView
+        android:id="@+id/textView_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_showTemp"
+        android:layout_below="@+id/textView_text"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="14dp"
         android:fontFamily="serif"
         android:text="Location N/A"
-        android:textSize="26dp"
-        android:textStyle="bold" />
+        android:textSize="28dp" />
+
 </RelativeLayout>
