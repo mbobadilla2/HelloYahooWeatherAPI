@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.dismiss();
 
         imageView_conditions.setImageBitmap(conditions);
-        textView_temp.setText(temp + " ºC");
+        textView_temp.setText(temp+"");
         textView_text.setText(text);
         textView_location.setText(location);
 
@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
     public void displayErrorMsg(){
         dialog.dismiss();
 
-        imageView_conditions.setImageResource(R.drawable.ic_insert_photo_black_200dp);
-        textView_temp.setText("Temp N/A");
+        imageView_conditions.setImageResource(R.drawable.ic_insert_photo_white_200dp);
+        textView_temp.setText("--");
         textView_text.setText("Conditions N/A");
         textView_location.setText("Location N/A");
 
